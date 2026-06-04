@@ -2,6 +2,7 @@
 
 public class UserRole
 {
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     public int UserId { get; set; }
 
     public User User { get; set; } = null!;

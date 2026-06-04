@@ -2,6 +2,9 @@
 
 public class User
 {
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+    public PlayerProfile? PlayerProfile { get; set; }
     public int Id { get; set; }
 
     public string FirstName { get; set; } = string.Empty;
