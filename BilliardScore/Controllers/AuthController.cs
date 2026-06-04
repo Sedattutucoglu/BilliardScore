@@ -26,12 +26,12 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-       var result = await _authService.LoginAsync(request);
-        if (!result)
+       var token = await _authService.LoginAsync(request);
+        if (token == null)
         {
             return Unauthorized("Kullanıcı adı veya şifre hatalı.");
         }
 
-        return Ok(true);
+        return Ok(new {token=token});
     }
 }

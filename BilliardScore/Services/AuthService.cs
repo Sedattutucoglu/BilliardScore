@@ -9,11 +9,14 @@ namespace BilliardScore.Services;
 
 public class AuthService : IAuthService
 {
+    private readonly IJwtService _jwtService;
     private readonly AppDbContext _context;
 
-    public AuthService(AppDbContext context)
+    public AuthService(AppDbContext context,IJwtService jwtService)
     {
         _context = context;
+        _jwtService = jwtService;   
+
     }
     public async Task<bool> RegisterAsync(RegisterRequest request)
     {
@@ -40,7 +43,7 @@ public class AuthService : IAuthService
         return true;
     }
 
-    public async Task<bool> LoginAsync(LoginRequest request)
+    public async Task<string?> LoginAsync(LoginRequest request)
     {
         var user = await _context.Users
             .FirstOrDefaultAsync(x =>
@@ -48,9 +51,14 @@ public class AuthService : IAuthService
                  x.UserName == request.EmailOrUserName);
         if (user == null)
         {
-            return false;
+            return null;
         }
         var isPasswordValid = PasswordHasher.VerifyPassword(request.Password, user.PasswordHash);
-        return isPasswordValid;
+        if (!isPasswordValid)
+        {
+            return null;
+        }
+        var token = _jwtService.GenerateToken(user.Id,user.UserName);
+        return token;
     }
 }
